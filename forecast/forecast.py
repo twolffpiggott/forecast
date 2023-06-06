@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from typing import List
+from typing import List, Union
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,6 @@ class InvestmentAssumptions:
 
     It includes parameters for property investment and stock market investment.
 
-    TODO annual 10% agent fees for rental
     TODO escalation for income surplus?
 
     :param income_surplus: Monthly income surplus available for investment.
@@ -48,6 +47,8 @@ class InvestmentAssumptions:
     :param rental_escalation_rate: Annual escalation rate for rental.
     :param property_expenses_escalation_rate: Annual escalation rate for property expenses.
     :param inflation_rate: The annual inflation rate used to calculate real values.
+    :param rental_management_percentage_fee: The (optional) percentage of the coming year's
+        total rental income charged by the agent for procurement and management
     """
 
     income_surplus: float
@@ -68,6 +69,7 @@ class InvestmentAssumptions:
     rental_escalation_rate: float
     property_expenses_escalation_rate: float
     inflation_rate: float
+    rental_management_percentage_fee: Union[float, None] = None
 
 
 def calculate_bond_repayment(principal: float, r: float, n: int) -> float:
@@ -135,9 +137,12 @@ def forecast_investment_values(
     )
     property_costs = assumptions.transfer_duty + assumptions.lawyer_fees
     monthly_rental_income = assumptions.monthly_rental_income
+    net_monthly_rental_income = _calculate_net_monthly_rental_income(
+        monthly_rental_income, assumptions.rental_management_percentage_fee
+    )
     monthly_investment_after_expenses = (
         assumptions.income_surplus
-        + monthly_rental_income
+        + net_monthly_rental_income
         - bond_repayment
         - monthly_property_expenses
     )
@@ -207,11 +212,14 @@ def forecast_investment_values(
                 1 + assumptions.property_expenses_escalation_rate
             )
             monthly_rental_income *= 1 + assumptions.rental_escalation_rate
+            net_monthly_rental_income = _calculate_net_monthly_rental_income(
+                monthly_rental_income, assumptions.rental_management_percentage_fee
+            )
 
             # Recalculate monthly investment after expenses with updated property expenses and rental income
             monthly_investment_after_expenses = (
                 assumptions.income_surplus
-                + monthly_rental_income
+                + net_monthly_rental_income
                 - bond_repayment
                 - monthly_property_expenses
             )
@@ -240,3 +248,14 @@ def forecast_investment_values(
         property_values=property_total_value_real,
         investment_values=investment_total_value_real,
     )
+
+
+def _calculate_net_monthly_rental_income(
+    monthly_rental_income: float, rental_management_percentage_fee: Union[float, None]
+) -> float:
+    if rental_management_percentage_fee is not None:
+        monthly_management_fee = (
+            rental_management_percentage_fee * monthly_rental_income
+        )
+        monthly_rental_income -= monthly_management_fee
+    return monthly_rental_income

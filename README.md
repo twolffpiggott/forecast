@@ -39,6 +39,7 @@ The package uses a set of assumptions to model the investment scenarios. These a
 - **Rental Escalation Rate**: The annual escalation rate for rental.
 - **Property Expenses Escalation Rate**: The annual escalation rate for property expenses.
 - **Inflation rate**: Assumed annual inflation rate used to calculate the real value of investments.
+- **Rental management percentage fee**: The (optional) percentage of the coming year's total rental income charged by the agent for procurement and management.
 
 ## Scenarios Compared
 

@@ -98,7 +98,7 @@ def plot_forecast(
     assumptions_text = "\n".join(
         [
             f"{key}: {format_rate(value)}"
-            if "rate" in key
+            if "rate" in key or "percentage" in key
             else f"{key}: {format_rand_value(value)}"
             if "term" not in key and "years" not in key
             else f"{key}: {value} years"

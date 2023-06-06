@@ -55,6 +55,7 @@ if __name__ == "__main__":
         rental_escalation_rate=0.05,
         property_expenses_escalation_rate=0.05,
         inflation_rate=0.06,
+        rental_management_percentage_fee=0.1,
     )
     assumptions = InvestmentAssumptions(**kwargs)
     forecast = forecast_investment_values(assumptions, label="Baseline")
