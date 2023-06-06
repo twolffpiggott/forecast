@@ -3,7 +3,9 @@ import sys
 from typing import Union
 
 
-def setup_logger(logger_name: Union[str, None], level: Union[str, int] = logging.INFO):
+def setup_logger(
+    logger_name: Union[str, None] = None, level: Union[str, int] = logging.INFO
+):
     logger = logging.getLogger(logger_name)
     logger.setLevel(level)
 

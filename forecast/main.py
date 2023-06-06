@@ -6,7 +6,7 @@ from forecast import InvestmentAssumptions, forecast_investment_values
 from forecast.plot import plot_forecast, plot_multiple_forecasts
 from forecast.utils import format_rand_value, format_rate, setup_logger
 
-logger = setup_logger(None)
+logger = setup_logger()
 
 
 def generate_and_plot_forecasts(
@@ -54,6 +54,7 @@ if __name__ == "__main__":
         property_sale_commission_rate=0.05,
         rental_escalation_rate=0.05,
         property_expenses_escalation_rate=0.05,
+        inflation_rate=0.06,
     )
     assumptions = InvestmentAssumptions(**kwargs)
     forecast = forecast_investment_values(assumptions, label="Baseline")

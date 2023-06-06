@@ -47,6 +47,7 @@ class InvestmentAssumptions:
     :param property_sale_commission_rate: Commission percent for property sale
     :param rental_escalation_rate: Annual escalation rate for rental.
     :param property_expenses_escalation_rate: Annual escalation rate for property expenses.
+    :param inflation_rate: The annual inflation rate used to calculate real values.
     """
 
     income_surplus: float
@@ -66,6 +67,7 @@ class InvestmentAssumptions:
     property_sale_commission_rate: float
     rental_escalation_rate: float
     property_expenses_escalation_rate: float
+    inflation_rate: float
 
 
 def calculate_bond_repayment(principal: float, r: float, n: int) -> float:
@@ -161,6 +163,11 @@ def forecast_investment_values(
     investment_total_value = [
         monthly_investment_in_stocks + property_costs + assumptions.deposit
     ]
+    property_total_value_real = [property_total_value[0]]
+    investment_total_value_real = [investment_total_value[0]]
+
+    # Convert annual inflation rate to monthly
+    monthly_inflation_rate = (1 + assumptions.inflation_rate) ** (1 / 12) - 1
 
     # Simulating property value and investment in stocks over time
     for i in range(1, n_months):
@@ -221,8 +228,15 @@ def forecast_investment_values(
         )
         investment_total_value.append(investment_in_stocks)
 
+        # Adjust for inflation at the end of each month
+        inflation_adjustment = (1 + monthly_inflation_rate) ** i
+        property_total_value_real.append(property_total_value[i] / inflation_adjustment)
+        investment_total_value_real.append(
+            investment_total_value[i] / inflation_adjustment
+        )
+
     return ForecastScenario(
         label=label,
-        property_values=property_total_value,
-        investment_values=investment_total_value,
+        property_values=property_total_value_real,
+        investment_values=investment_total_value_real,
     )

@@ -38,6 +38,7 @@ The package uses a set of assumptions to model the investment scenarios. These a
 - **Property Sale Commission Rate**: The commission percentage for property sale.
 - **Rental Escalation Rate**: The annual escalation rate for rental.
 - **Property Expenses Escalation Rate**: The annual escalation rate for property expenses.
+- **Inflation rate**: Assumed annual inflation rate used to calculate the real value of investments.
 
 ## Scenarios Compared
 
